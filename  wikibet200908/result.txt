@@ -1,0 +1,457 @@
+lp_solve 5.5.0.14 demo
+
+This demo will show most of the features of lp_solve 5.5.0.14
+
+We start by creating a new problem with 4 variables and 0 constraints
+We use: lp = lpsolve.make_lp(0, 4);
+We can show the current problem with lpsolve.print_lp(lp);
+Model name: 
+                C1       C2       C3       C4 
+Minimize         0        0        0        0 
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+Now we add some constraints
+lpsolve.add_constraint(lp, ref Row[0], lpsolve.lpsolve_constr_types.LE, 4);
+Model name: 
+                C1       C2       C3       C4 
+Minimize         0        0        0        0 
+R1               3        2        2        1 <=        4
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+lpsolve.add_constraint(lp, ref Row[0], lpsolve.lpsolve_constr_types.GE, 3);
+Model name: 
+                C1       C2       C3       C4 
+Minimize         0        0        0        0 
+R1               3        2        2        1 <=        4
+R2               0        4        3        1 >=        3
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+Set the objective function
+lpsolve.set_obj_fn(lp, ref Row[0]);
+Model name: 
+                C1       C2       C3       C4 
+Minimize         2        3       -2        3 
+R1               3        2        2        1 <=        4
+R2               0        4        3        1 >=        3
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+Now solve the problem with lpsolve.solve(lp);
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+Found feasibility by dual simplex after             1 iter.
+ 
+Optimal solution                  -4 after          2 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 2, 0 (0.0%) were bound flips.
+      There were 3 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 0.7 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.016 seconds, presolve used 0.000 seconds,
+       ... 0.002 seconds in simplex solver, in total 0.018 seconds.
+OPTIMAL: -4
+The value is 0, this means we found an optimal solution
+We can display this solution with lpsolve.print_solution(lp);
+
+Value of objective function: -4.00000000
+
+Actual values of the variables:
+C1                              0
+C2                              0
+C3                              2
+C4                              0
+
+Actual values of the constraints:
+R1                              4
+R2                              6
+The dual variables of the solution are printed with
+lpsolve.print_duals(lp);
+
+Objective function limits:
+                                 From            Till       FromValue
+C1                                 -3          1e+030       0.6666667
+C2                                 -2          1e+030               2
+C3                            -1e+030               0         -1e+030
+C4                                 -1          1e+030               4
+
+Dual values with from - till limits:
+                           Dual value            From            Till
+R1                                 -1               2          1e+030
+R2                                  0         -1e+030          1e+030
+C1                                  5         -1e+030       0.6666667
+C2                                  5              -3               2
+C3                                  0         -1e+030          1e+030
+C4                                  4         -1e+030               4
+We can change a single element in the matrix with
+lpsolve.set_mat(lp, 2, 1, 0.5);
+Model name: 
+                C1       C2       C3       C4 
+Minimize         2        3       -2        3 
+R1               3        2        2        1 <=        4
+R2             0.5        4        3        1 >=        3
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+If we want to maximize the objective function use lpsolve.set_maxim(lp);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1               3        2        2        1 <=        4
+R2             0.5        4        3        1 >=        3
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+after solving this gives us:
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+ 
+Optimal solution                  12 after          4 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 4, 0 (0.0%) were bound flips.
+      There were 1 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 4.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.019 seconds, presolve used 0.000 seconds,
+       ... 0.000 seconds in simplex solver, in total 0.019 seconds.
+
+Value of objective function: 12.00000000
+
+Actual values of the variables:
+C1                              0
+C2                              0
+C3                              0
+C4                              4
+
+Actual values of the constraints:
+R1                              4
+R2                              4
+
+Objective function limits:
+                                 From            Till       FromValue
+C1                            -1e+030               9             0.4
+C2                            -1e+030               6               2
+C3                            -1e+030               6               2
+C4                                1.5          1e+030         -1e+030
+
+Dual values with from - till limits:
+                           Dual value            From            Till
+R1                                  3               3          1e+030
+R2                                  0         -1e+030          1e+030
+C1                                 -7         -1e+030             0.4
+C2                                 -3            -0.5               2
+C3                                 -8              -1               2
+C4                                  0         -1e+030          1e+030
+Change the value of a rhs element with lpsolve.set_rh(lp, 1, 7.45);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1               3        2        2        1 <=     7.45
+R2             0.5        4        3        1 >=        3
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+ 
+Optimal solution               22.35 after          0 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 0, 0 (100.0%) were bound flips.
+      There were 1 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 0.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.019 seconds, presolve used 0.000 seconds,
+       ... 0.001 seconds in simplex solver, in total 0.020 seconds.
+
+Value of objective function: 22.35000000
+
+Actual values of the variables:
+C1                              0
+C2                              0
+C3                              0
+C4                           7.45
+
+Actual values of the constraints:
+R1                           7.45
+R2                           7.45
+We change C4 to the integer type with
+lpsolve.set_int(lp, 4, true);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1               3        2        2        1 <=     7.45
+R2             0.5        4        3        1 >=        3
+Type          Real     Real     Real      Int 
+upbo           Inf      Inf      Inf      Inf 
+lowbo            0        0        0        0 
+We set branch & bound debugging on with lpsolve.set_debug(lp, true);
+and solve...
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+
+Relaxed solution               22.35 after          0 iter is B&B base.
+ 
+Feasible solution             21.675 after          1 iter,         2 nodes (gap 2.9%)
+ 
+Optimal solution              21.675 after          1 iter,         2 nodes (gap 2.9%).
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 1, 0 (0.0%) were bound flips.
+      There were 2 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 0.5 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The maximum B&B level was 2, 1.0x MIP order, 2 at the optimal solution.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.020 seconds, presolve used 0.000 seconds,
+       ... 0.001 seconds in simplex solver, in total 0.021 seconds.
+
+Value of objective function: 21.67500000
+
+Actual values of the variables:
+C1                              0
+C2                          0.225
+C3                              0
+C4                              7
+
+Actual values of the constraints:
+R1                           7.45
+R2                            7.9
+We can set bounds on the variables with
+lpsolve.set_lowbo(lp, 2, 2); & lpsolve.set_upbo(lp, 4, 5.3);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1               3        2        2        1 <=     7.45
+R2             0.5        4        3        1 >=        3
+Type          Real     Real     Real      Int 
+upbo           Inf      Inf      Inf      5.3 
+lowbo            0        2        0        0 
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+
+Relaxed solution               16.35 after          1 iter is B&B base.
+ 
+Feasible solution             15.675 after          2 iter,         2 nodes (gap 3.9%)
+ 
+Optimal solution              15.675 after          2 iter,         2 nodes (gap 3.9%).
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 2, 0 (0.0%) were bound flips.
+      There were 2 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 1.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The maximum B&B level was 2, 1.0x MIP order, 2 at the optimal solution.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.021 seconds, presolve used 0.000 seconds,
+       ... 0.002 seconds in simplex solver, in total 0.023 seconds.
+
+Value of objective function: 15.67500000
+
+Actual values of the variables:
+C1                              0
+C2                          2.225
+C3                              0
+C4                              3
+
+Actual values of the constraints:
+R1                           7.45
+R2                           11.9
+Now remove a constraint with lpsolve.del_constraint(lp, 1);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1             0.5        4        3        1 >=        3
+Type          Real     Real     Real      Int 
+upbo           Inf      Inf      Inf      5.3 
+lowbo            0        2        0        0 
+Add an equality constraint
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3       -2        3 
+R1             0.5        4        3        1 >=        3
+R2               1        2        1        4  =        8
+Type          Real     Real     Real      Int 
+upbo           Inf      Inf      Inf      5.3 
+lowbo            0        2        0        0 
+A column can be added with:
+lpsolve.add_column(lp, ref Col[1]);
+Model name: 
+                C1       C2       C3       C4       C5 
+Maximize         2        3       -2        3        3 
+R1             0.5        4        3        1        2 >=        3
+R2               1        2        1        4        2  =        8
+Type          Real     Real     Real      Int     Real 
+upbo           Inf      Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0        0 
+A column can be removed with:
+lpsolve.del_column(lp, 3);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3        3        3 
+R1             0.5        4        1        2 >=        3
+R2               1        2        4        2  =        8
+Type          Real     Real      Int     Real 
+upbo           Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0 
+We can use automatic scaling with:
+lpsolve.set_scaling(lp, lpsolve.lpsolve_scales.SCALE_MEAN);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3        3        3 
+R1             0.5        4        1        2 >=        3
+R2               1        2        4        2  =        8
+Type          Real     Real      Int     Real 
+upbo           Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0 
+The function lpsolve.get_mat(lp, row, column); returns a single
+matrix element
+lpsolve.get_mat(lp, 2, 3); lpsolve.get_mat(lp, 1, 1); gives 4, 0.5
+Notice that get_mat returns the value of the original unscaled problem
+If there are any integer type variables, then only the rows are scaled
+lpsolve.set_int(lp, 3, false);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3        3        3 
+R1             0.5        4        1        2 >=        3
+R2               1        2        4        2  =        8
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0 
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+Found feasibility by dual simplex after             1 iter.
+ 
+Optimal solution                  14 after          3 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 3, 0 (0.0%) were bound flips.
+      There were 3 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 1.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.024 seconds, presolve used 0.000 seconds,
+       ... 0.001 seconds in simplex solver, in total 0.025 seconds.
+print_solution gives the solution to the original problem
+
+Value of objective function: 14.00000000
+
+Actual values of the variables:
+C1                              4
+C2                              2
+C3                              0
+C4                              0
+
+Actual values of the constraints:
+R1                             10
+R2                              8
+Scaling is turned off with lpsolve.unscale(lp);
+Model name: 
+                C1       C2       C3       C4 
+Maximize         2        3        3        3 
+R1             0.5        4        1        2 >=        3
+R2               1        2        4        2  =        8
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0 
+Now turn B&B debugging off and simplex tracing on with
+lpsolve.set_debug(lp, false); lpsolve.set_trace(lp, true); and lpsolve.solve(lp);
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+Start at primal feasible basis
+rowdual: Infeasibility sum                  0 in       0 constraints.
+ 
+Optimal solution                  14 after          0 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 0, 0 (100.0%) were bound flips.
+      There were 1 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 0.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.025 seconds, presolve used 0.000 seconds,
+       ... 0.000 seconds in simplex solver, in total 0.025 seconds.
+Where possible, lp_solve will start at the last found basis
+We can reset the problem to the initial basis with
+default_basis lp. Now solve it again...
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+ 
+Start at infeasible basis
+rowdual: Infeasibility sum              -17.2 in       1 constraints.
+coldual: Entering column 5, reduced cost -3, pivot value 4, bound swaps 0
+I:    1 - MAJOR -     2 leaves to LOWER,      5 enters from UPPER with THETA=4.3 and OBJ=9
+performiteration: Variable 5 entered basis at iter 1 at                  1
+performiteration: Feasibility gap at iter 1 is                  0
+rowdual: Infeasibility sum                  0 in       0 constraints.
+Found feasibility by dual simplex after             1 iter.
+I:    2 - MAJOR -     5 leaves to LOWER,      4 enters from LOWER with THETA=2 and OBJ=12
+performiteration: Variable 4 entered basis at iter 2 at                  2
+performiteration: Current objective function value at iter 2 is                 12
+I:    3 - MAJOR -     4 leaves to LOWER,      3 enters from LOWER with THETA=4 and OBJ=14
+performiteration: Variable 3 entered basis at iter 3 at                  4
+performiteration: Current objective function value at iter 3 is                 14
+primloop: Objective at iter          3 is                 14 (   2:    4 <-    3)
+rowdual: Infeasibility sum                  0 in       0 constraints.
+ 
+Optimal solution                  14 after          3 iter.
+
+Excellent numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.0.14 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 3, 0 (0.0%) were bound flips.
+      There were 3 refactorizations, 0 triggered by time and 0 by density.
+       ... on average 1.0 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 5 NZ entries, 1.0x largest basis.
+      The constraint matrix inf-norm is 0, with a dynamic range of 0.
+      Time to load data was 0.025 seconds, presolve used 0.000 seconds,
+       ... 0.001 seconds in simplex solver, in total 0.026 seconds.
+It is possible to give variables and constraints names
+lpsolve.set_row_name(lp, 1, "speed"); lpsolve.set_col_name(lp, 2, "money");
+Model name: 
+                C1    money       C3       C4 
+Maximize         2        3        3        3 
+speed          0.5        4        1        2 >=        3
+R2               1        2        4        2  =        8
+Type          Real     Real     Real     Real 
+upbo           Inf      Inf      5.3      Inf 
+lowbo            0        2        0        0 
+As you can see, all column and rows are assigned default names
+If a column or constraint is deleted, the names shift place also:
+lpsolve.del_column(lp, 1);
+Model name: 
+             money       C3       C4 
+Maximize         3        3        3 
+speed            4        1        2 >=        3
+R2               2        4        2  =        8
+Type          Real     Real     Real 
+upbo           Inf      5.3      Inf 
+lowbo            2        0        0 

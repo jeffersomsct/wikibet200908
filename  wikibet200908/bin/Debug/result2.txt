@@ -1,0 +1,24 @@
+An lp structure can be created and read from a .lp file
+lp = lpsolve.read_LP("lp.lp", 0, "test");
+The verbose option is disabled
+lp is now:
+Model name: test
+             money       C3       C4 
+Maximize         3        3        3 
+speed            4        1        2 >=        3
+R2               2        4        2  =        8
+Type          Real     Real     Real 
+upbo           Inf      5.3      Inf 
+lowbo            2        0        0 
+solution:
+
+Value of objective function: 12.00000000
+
+Actual values of the variables:
+money                           2
+C3                              0
+C4                              2
+
+Actual values of the constraints:
+speed                          12
+R2                              8
