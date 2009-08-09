@@ -22,7 +22,7 @@ namespace demo
             double jj,jn, kk,kn,livenum;
             int ii,j, k, f,num2;
             num2=num+1;
-            jj = 0; jn = 0; kk = 0; kn = 0;
+            jj = 0; jn = 0; kk = 0; kn = 0 ; g = 0 ;
             double han, odds, amt, betcenter, fee;
             bool freebet,ishave;
             ishave = false;
@@ -37,8 +37,8 @@ namespace demo
             double[, , ,] arrstr = new double[num, 9, 2, 2];
             double[, ,] arrtemp = new double[9, 2, 2];
             double[] hanarr=new double[num];
-            double[,] bets_col_sum_temp= new double[9,2];
-            double[,] bets_col_sum = new double[num2,9];
+            double[,] Bet_Col_Sum_temp= new double[9,2];
+            double[,] Bet_Col_Sum = new double[num+3,9];  // Bet_Col_Sum [莊家數ii , 狀況別 j] ii = 0 ~ 莊家數+2
             double[] bet_col=new double[9];
             double[] bet_col_draw=new double[9];
             baseclass basec = new baseclass();
@@ -63,7 +63,7 @@ namespace demo
                 betcenter = basec.BetCenter;
                 basec.calculate(blstr, typeclass, odds, han, freebet, ishave, amt, betcenter, fee);             
                 arrtemp = basec.Ftype;
-                bets_col_sum_temp = basec.Bets_Col_Sum_temp;
+                Bet_Col_Sum_temp = basec.Bets_Col_Sum_temp;
                 bet_col=basec.Bets_Col;
                 bet_col_draw=basec.Bets_Col_Draw;
             }
@@ -88,6 +88,13 @@ namespace demo
             string Limit_Equation;
             Limit_Equation = "";
 
+
+            //
+            //尚須處理 Limit_Equation = "B"
+            //尚須處理 最小值限制式
+            //
+            //
+
             if (num - kk > kn)  // 當 (莊家數 num - kk :bet_col_draw) > 絕對值 (kk : bet_col ) 則 Limit_Equation = A
             {
                  Limit_Equation = "A";
@@ -108,13 +115,13 @@ namespace demo
                     {
                         if (k == 0)
                         {
-                            jj = bets_col_sum_temp[j, k];
-                            bets_col_sum[ii, j] = jj;
+                            jj = Bet_Col_Sum_temp[j, k];
+                            Bet_Col_Sum[ii, j] = jj;
                         }
                         else
                         {
-                            jj = bets_col_sum_temp[j, k];
-                            bets_col_sum[num2-1, j] = jj;
+                            jj = Bet_Col_Sum_temp[j, k];
+                            Bet_Col_Sum[num2-1, j] = jj;
                         }
                     }
                 }
@@ -127,10 +134,12 @@ namespace demo
             //
             //利用各狀況J 的Bet_Col_Sum(莊家別ii, 狀況別 j) 及 Limit_Equation(狀況別 j) 來產生 Bet_Group(莊家別ii,Group) 及 Group
             //
-            //變數 Group = 0 記錄Group數量  
 
-            int Group = 0;
-            double[,] Bet_Group = new double[num+3, 9];
+           
+
+            int Group = 0;  //變數 Group = 0 記錄Group數量  
+
+            double[,] Bet_Group = new double[num+3, 9]; //Bet_Group = (ii 莊家數 , Group) ii = 0~ 莊家數+ 2
 
             for (j = 0; j < 8; j++) //-A-逐一狀況J 確認 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
             {
@@ -162,12 +171,73 @@ namespace demo
                     {
 
 
+                        for (g = 0; g < Group; g++) //-E-逐一將 Bet_Col_Sum (ii, j) 比對既有的 Bet_Group (ii, g)
+                        {
+                       
+                            int NewGroup = 0;  //變數 NewGroup = 0 記錄比對差異數量
+                            for (ii = 0; ii < num+1; ii++) //-F-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 比對 Bet_Group (ii, g)
+                            {
+                                if (Bet_Group [ii,g] = Bet_Col_Sum[ii, j]) //特定Group g 與 特定狀況 j 的 Bet_Group 與 Bet_Col_Sum 相同時
+                                {
+                                    NewGroup = NewGroup +0;
+                                }
+                                else
+                                {
+                                    NewGroup = NewGroup +1;
+                                }
+
+                            } //-F-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 比對 Bet_Group (ii, g)
+
+
+                            
+                            //比對完之後 查看 NewGroup 若=0 代表與Group g 相同
+
+                            if (NewGroup == 0)  // -G-NewGroup 若=0 代表特定狀況J之Bet_Col_Sum與Group g 相同
+                            {
+                               if (Limit_Equation(j) = "A")  // -H-特定狀況J之Bet_Col_Sum 為等式現制式
+                               {
+                                   Bet_Col_Sum[num+1, j] = g;
+                               }
+                               else // -H-特定狀況J之Bet_Col_Sum 為做小值現制式
+                               {
+
+                                   Bet_Col_Sum[num+1, j] = g;
+                                   Bet_Group [num+2 , g] = Limit_Equation(j)
+
+
+                               } // -H-特定狀況J之Bet_Col_Sum 為等式現制式
+
+
+                            }
+                            else  // -G-NewGroup 若=0 代表與現有之Group 皆不相同  應產生新Group
+                            {
+
+                                //將 Bet_Col_Sum [num+1,j] =0 存放Group 的位置,填入0
+                                Bet_Col_Sum[num + 1, j] = Group; 
+
+                                for (ii = 0; ii < num+1; ii++) //-I-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
+                                {
+                                    Bet_Group [ii,Group] = Bet_Col_Sum[ii, j]
+                                } //-I-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
+
+                                Bet_Group [num+2,Group] =  Limit_Equation (j);
+                                Group =Group +1
+                            
+
+                                
+
+
+                            } // -G-NewGroup 若=0 代表與Group g 相同
 
 
 
 
-                    }     // // -C-該特定狀況J,可為限制式,第1個Group是否存在
-                }     // -B-該特定狀況J 是否可為限制式 ,B or Null 不可為限制式
+
+
+
+                        } //-E-逐一將 Bet_Col_Sum (ii, j) 比對既有的 Bet_Group (ii, g)
+                    } //-C-該特定狀況J,可為限制式,第1個Group是否存在
+                } // -B-該特定狀況J 是否可為限制式 ,B or Null 不可為限制式
             } //-A-逐一狀況J 確認 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
 
 
@@ -178,12 +248,77 @@ namespace demo
             //利用Bet_Group(莊家別ii,Group) 產生 Bet_Limit (莊家別ii,Limit) 
             //
             //變數 Limit = 0 記錄限制式Limit 數量 
+            //EQ_L =0 等式限制式數量
+
+            int Limit = 0;EQ_L=0; 
+            double[,] Bet_Group_F = new double[num+3, 1]; //Bet_Group_F = (ii 莊家數 , 0) ii = 0~ 莊家數+ 2 存放第1個等式限制式的Bet_Group
+            double[,] Bet_Limit = new double[num+2, 9]; //Bet_Limit = (ii 莊家數 , Limit) ii = 0~ 莊家數+ 1 存放限制式
+
+            for (g = 0; g < Group -1; g++) //逐一group處理 轉為limit
+            {
+
+                if (Limit_Equation(j) = "A")  // -A-特定Group G 之Bet_Group 為等式現制式
+                {
+                    EQ_L=EQ_L+1;
+                    if  (EQ_L =1) // -B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式 (TRUE)
+                    {
+                        for (ii = 0; ii < num+2; ii++) //-C-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
+                        {
+                            Bet_Group_F [ii,0] = Bet_Group[ii, g]
+                        } //-C-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
+
+                    }
+                    else //-B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式 (FALSE)
+                    {
+                        for (ii = 0; ii < num; ii++) //-D-逐一將各莊家ii參數 由 Bet_Group (ii, g) 轉換為 Bet_Limit (ii, Limit)
+                        {
+                            Bet_Limit [ii,Limit] = Bet_Group_F [ii,0] - Bet_Group[ii, g];  //參數部份
+                        }
+
+                        Bet_Limit [num,Limit] = Bet_Group[num, g] - Bet_Group_F [num,0]; //常數部份
+
+                        Bet_Limit [num+1,Limit] = "EQ"
+
+                    } // -B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式
+
+                }
+                else// -A-特定Group G 之Bet_Group 為最小值現制式
+                {
+                    for (ii = 0; ii < num; ii++) //-D-逐一將各莊家ii參數 由 Bet_Group (ii, g) 轉換為 Bet_Limit (ii, Limit)
+                    {
+                            Bet_Limit [ii,Limit] = Bet_Group[ii, g];  //參數部份
+                    }
+
+                        Bet_Limit [num,Limit] =  Bet_Group[num+2, g] - Bet_Group[num, g]; //常數部份
+
+                        Bet_Limit [num+1,Limit] = "GE"
+
+
+                } // -A-特定Group G 之Bet_Group 為等式現制式
+
+
+
+
+
+            }//逐一group處理 轉為limit
+
+
+
+
+
+
+
+
+
+
+
+
+
             //
-
-            int Limit = 0;
-
-
-
+            //
+            //
+            //
+            //
 
 
             textBox1.Text = str1;
