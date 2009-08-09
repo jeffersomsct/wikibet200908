@@ -17,3 +17,5 @@ C:\program1\lp_solve\bin\Debug\demo.pdb
 C:\program1\lp_solve\obj\Debug\ResolveAssemblyReference.cache
 C:\program1\lp_solve\obj\Debug\demo.Form1.resources
 C:\program1\lp_solve\obj\Debug\demo.csproj.GenerateResource.Cache
+D:\wikibet200908\obj\Debug\demo.exe
+D:\wikibet200908\obj\Debug\demo.pdb
