@@ -138,20 +138,20 @@ namespace demo
            
 
             int Group = 0;  //變數 Group = 0 記錄Group數量  
-
+            int g=0;
             double[,] Bet_Group = new double[num+3, 9]; //Bet_Group = (ii 莊家數 , Group) ii = 0~ 莊家數+ 2
 
             for (j = 0; j < 8; j++) //-A-逐一狀況J 確認 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
             {
 
-                if (Limit_Equation = "B" || Limit_Equation = "")  // -B-該特定狀況J 是否可為限制式 ,B or Null 不可為限制式
+                if (Limit_Equation == "B" || Limit_Equation == "")  // -B-該特定狀況J 是否可為限制式 ,B or Null 不可為限制式
                 {
                  //進行下一狀況J 確認   
                 }
                 else  // -B-該特定狀況J 是否可為限制式 A or 數字 可為限制式
                 {
 
-                    if (Bet_Group[num+2,j]="")  // -C-該特定狀況J,可為限制式,第1個Group是否存在(不存在)
+                    if (Bet_Group[num+2,j].ToString()=="")  // -C-該特定狀況J,可為限制式,第1個Group是否存在(不存在)
                     {
 
                         //將 Bet_Col_Sum [num+1,j] =0 存放Group 的位置,填入0
@@ -159,11 +159,11 @@ namespace demo
 
                         for (ii = 0; ii < num+1; ii++) //-D-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, 0)
                         {
-                            Bet_Group [ii,0] = Bet_Col_Sum[ii, j]
+                            Bet_Group [ii,0] = Bet_Col_Sum[ii, j];
                         } //-D-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, 0)
 
                         Bet_Group [num+2,0] =  Limit_Equation (j);
-                        Group =Group +1
+                        Group =Group +1;
                             
                     }
 
@@ -177,7 +177,7 @@ namespace demo
                             int NewGroup = 0;  //變數 NewGroup = 0 記錄比對差異數量
                             for (ii = 0; ii < num+1; ii++) //-F-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 比對 Bet_Group (ii, g)
                             {
-                                if (Bet_Group [ii,g] = Bet_Col_Sum[ii, j]) //特定Group g 與 特定狀況 j 的 Bet_Group 與 Bet_Col_Sum 相同時
+                                if (Bet_Group [ii,g] == Bet_Col_Sum[ii, j]) //特定Group g 與 特定狀況 j 的 Bet_Group 與 Bet_Col_Sum 相同時
                                 {
                                     NewGroup = NewGroup +0;
                                 }
@@ -202,7 +202,7 @@ namespace demo
                                {
 
                                    Bet_Col_Sum[num+1, j] = g;
-                                   Bet_Group [num+2 , g] = Limit_Equation(j)
+                                   Bet_Group [num+2 , g] = Limit_Equation(j);
 
 
                                } // -H-特定狀況J之Bet_Col_Sum 為等式現制式
@@ -217,11 +217,11 @@ namespace demo
 
                                 for (ii = 0; ii < num+1; ii++) //-I-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
                                 {
-                                    Bet_Group [ii,Group] = Bet_Col_Sum[ii, j]
+                                    Bet_Group [ii,Group] = Bet_Col_Sum[ii, j];
                                 } //-I-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
 
                                 Bet_Group [num+2,Group] =  Limit_Equation (j);
-                                Group =Group +1
+                                Group =Group +1;
                             
 
                                 
@@ -250,17 +250,17 @@ namespace demo
             //變數 Limit = 0 記錄限制式Limit 數量 
             //EQ_L =0 等式限制式數量
 
-            int Limit = 0;EQ_L=0; 
+            int Limit = 0;int EQ_L=0; 
             double[,] Bet_Group_F = new double[num+3, 1]; //Bet_Group_F = (ii 莊家數 , 0) ii = 0~ 莊家數+ 2 存放第1個等式限制式的Bet_Group
             double[,] Bet_Limit = new double[num+2, 9]; //Bet_Limit = (ii 莊家數 , Limit) ii = 0~ 莊家數+ 1 存放限制式
 
             for (g = 0; g < Group -1; g++) //逐一group處理 轉為limit
             {
 
-                if (Limit_Equation(j) = "A")  // -A-特定Group G 之Bet_Group 為等式現制式
+                if (Limit_Equation[j] == "A")  // -A-特定Group G 之Bet_Group 為等式現制式
                 {
                     EQ_L=EQ_L+1;
-                    if  (EQ_L =1) // -B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式 (TRUE)
+                    if  (EQ_L==1) // -B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式 (TRUE)
                     {
                         for (ii = 0; ii < num+2; ii++) //-C-逐一將各莊家ii參數 由 Bet_Col_Sum (ii, j) 轉換為 Bet_Group (ii, Group)
                         {
@@ -277,7 +277,7 @@ namespace demo
 
                         Bet_Limit [num,Limit] = Bet_Group[num, g] - Bet_Group_F [num,0]; //常數部份
 
-                        Bet_Limit [num+1,Limit] = "EQ"
+                        Bet_Limit [num+1,Limit] = "EQ";
 
                     } // -B-特定Group G 之Bet_Group 為等式現制式,進一步判斷是否為第1個等式現制式
 
@@ -291,7 +291,7 @@ namespace demo
 
                         Bet_Limit [num,Limit] =  Bet_Group[num+2, g] - Bet_Group[num, g]; //常數部份
 
-                        Bet_Limit [num+1,Limit] = "GE"
+                        Bet_Limit [num+1,Limit] = "GE";
 
 
                 } // -A-特定Group G 之Bet_Group 為等式現制式
